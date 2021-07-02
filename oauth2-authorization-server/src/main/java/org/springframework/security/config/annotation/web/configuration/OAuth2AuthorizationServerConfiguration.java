@@ -27,6 +27,7 @@ import com.nimbusds.jwt.proc.ConfigurableJWTProcessor;
 import com.nimbusds.jwt.proc.DefaultJWTProcessor;
 
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
@@ -35,6 +36,7 @@ import org.springframework.security.config.annotation.web.configurers.oauth2.ser
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.resource.OAuth2ResourceServerConfigurer;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
 import org.springframework.security.oauth2.jwt.NimbusJwtDecoder;
+import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.RequestMatcher;
 
@@ -87,6 +89,20 @@ public class OAuth2AuthorizationServerConfiguration {
 		jwtProcessor.setJWTClaimsSetVerifier((claims, context) -> {
 		});
 		return new NimbusJwtDecoder(jwtProcessor);
+	}
+
+	@Bean
+	@Conditional(MissingBeanDefinitionCondition.OnMissingProviderSettings.class)
+	public ProviderSettings providerSettings() {
+		return new ProviderSettings();
+	}
+
+	@Bean
+	public AuthorizationServerBeanDefinitionRegistryPostProcessor authorizationServerBeanDefinitionRegistryPostProcessor() {
+		AuthorizationServerBeanDefinitionRegistryPostProcessor postProcessor =
+				new AuthorizationServerBeanDefinitionRegistryPostProcessor();
+		postProcessor.registerBeanDefinition(ProviderSettings.class);
+		return postProcessor;
 	}
 
 }
