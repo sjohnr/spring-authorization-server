@@ -60,8 +60,8 @@ import static org.mockito.Mockito.verify;
  * @author Joe Grandja
  */
 public class JdbcRegisteredClientRepositoryTests {
-	private static final String OAUTH2_REGISTERED_CLIENT_SCHEMA_SQL_RESOURCE = "/org/springframework/security/oauth2/server/authorization/client/oauth2-registered-client-schema.sql";
-	private static final String OAUTH2_CUSTOM_REGISTERED_CLIENT_SCHEMA_SQL_RESOURCE = "/org/springframework/security/oauth2/server/authorization/client/custom-oauth2-registered-client-schema.sql";
+	private static final String OAUTH2_REGISTERED_CLIENT_SCHEMA_SQL_RESOURCE = "org/springframework/security/oauth2/server/authorization/client/oauth2-registered-client-schema.sql";
+	private static final String OAUTH2_CUSTOM_REGISTERED_CLIENT_SCHEMA_SQL_RESOURCE = "org/springframework/security/oauth2/server/authorization/client/custom-oauth2-registered-client-schema.sql";
 	private EmbeddedDatabase db;
 	private JdbcOperations jdbcOperations;
 	private JdbcRegisteredClientRepository registeredClientRepository;
