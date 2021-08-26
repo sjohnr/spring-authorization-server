@@ -172,20 +172,8 @@ public final class OAuth2AuthorizationCodeRequestAuthenticationProvider implemen
 		OAuth2AuthenticationValidator scopeValidator = resolveAuthenticationValidator(OAuth2ParameterNames.SCOPE);
 		scopeValidator.validate(authenticationContext);
 
-		// code_challenge (REQUIRED for public clients) - RFC 7636 (PKCE)
-		String codeChallenge = (String) authorizationCodeRequestAuthentication.getAdditionalParameters().get(PkceParameterNames.CODE_CHALLENGE);
-		if (StringUtils.hasText(codeChallenge)) {
-			String codeChallengeMethod = (String) authorizationCodeRequestAuthentication.getAdditionalParameters().get(PkceParameterNames.CODE_CHALLENGE_METHOD);
-			if (StringUtils.hasText(codeChallengeMethod)) {
-				if (!"S256".equals(codeChallengeMethod) && !"plain".equals(codeChallengeMethod)) {
-					throwError(OAuth2ErrorCodes.INVALID_REQUEST, PkceParameterNames.CODE_CHALLENGE_METHOD, PKCE_ERROR_URI,
-							authorizationCodeRequestAuthentication, registeredClient, null);
-				}
-			}
-		} else if (registeredClient.getClientSettings().isRequireProofKey()) {
-			throwError(OAuth2ErrorCodes.INVALID_REQUEST, PkceParameterNames.CODE_CHALLENGE, PKCE_ERROR_URI,
-					authorizationCodeRequestAuthentication, registeredClient, null);
-		}
+		OAuth2AuthenticationValidator codeChallengeValidator = resolveAuthenticationValidator(PkceParameterNames.CODE_CHALLENGE);
+		codeChallengeValidator.validate(authenticationContext);
 
 		// ---------------
 		// The request is valid - ensure the resource owner is authenticated
@@ -363,6 +351,7 @@ public final class OAuth2AuthorizationCodeRequestAuthenticationProvider implemen
 		Map<String, OAuth2AuthenticationValidator> authenticationValidators = new HashMap<>();
 		authenticationValidators.put(OAuth2ParameterNames.REDIRECT_URI, new DefaultRedirectUriOAuth2AuthenticationValidator());
 		authenticationValidators.put(OAuth2ParameterNames.SCOPE, new DefaultScopeOAuth2AuthenticationValidator());
+		authenticationValidators.put(PkceParameterNames.CODE_CHALLENGE, new DefaultCodeChallengeOAuth2AuthenticationValidator());
 		return authenticationValidators::get;
 	}
 
@@ -569,6 +558,32 @@ public final class OAuth2AuthorizationCodeRequestAuthenticationProvider implemen
 			if (!requestedScopes.isEmpty() && !allowedScopes.containsAll(requestedScopes)) {
 				throwError(OAuth2ErrorCodes.INVALID_SCOPE, OAuth2ParameterNames.SCOPE,
 						authorizationCodeRequestAuthentication, registeredClient);
+			}
+		}
+
+	}
+
+	private static class DefaultCodeChallengeOAuth2AuthenticationValidator implements OAuth2AuthenticationValidator {
+
+		@Override
+		public void validate(OAuth2AuthenticationContext authenticationContext) {
+			OAuth2AuthorizationCodeRequestAuthenticationToken authorizationCodeRequestAuthentication =
+					authenticationContext.getAuthentication();
+			RegisteredClient registeredClient = authenticationContext.get(RegisteredClient.class);
+
+			// code_challenge (REQUIRED for public clients) - RFC 7636 (PKCE)
+			String codeChallenge = (String) authorizationCodeRequestAuthentication.getAdditionalParameters().get(PkceParameterNames.CODE_CHALLENGE);
+			if (StringUtils.hasText(codeChallenge)) {
+				String codeChallengeMethod = (String) authorizationCodeRequestAuthentication.getAdditionalParameters().get(PkceParameterNames.CODE_CHALLENGE_METHOD);
+				if (StringUtils.hasText(codeChallengeMethod)) {
+					if (!"S256".equals(codeChallengeMethod) && !"plain".equals(codeChallengeMethod)) {
+						throwError(OAuth2ErrorCodes.INVALID_REQUEST, PkceParameterNames.CODE_CHALLENGE_METHOD, PKCE_ERROR_URI,
+								authorizationCodeRequestAuthentication, registeredClient, null);
+					}
+				}
+			} else if (registeredClient.getClientSettings().isRequireProofKey()) {
+				throwError(OAuth2ErrorCodes.INVALID_REQUEST, PkceParameterNames.CODE_CHALLENGE, PKCE_ERROR_URI,
+						authorizationCodeRequestAuthentication, registeredClient, null);
 			}
 		}
 

@@ -544,9 +544,9 @@ public class OAuth2AuthorizationCodeRequestAuthenticationProviderTests {
 		assertAuthorizationCodeRequestWithAuthorizationCodeResult(registeredClient, authentication, authenticationResult);
 
 		ArgumentCaptor<String> parameterNameCaptor = ArgumentCaptor.forClass(String.class);
-		verify(authenticationValidatorResolver, times(2)).apply(parameterNameCaptor.capture());
+		verify(authenticationValidatorResolver, times(3)).apply(parameterNameCaptor.capture());
 		assertThat(parameterNameCaptor.getAllValues()).containsExactly(
-				OAuth2ParameterNames.REDIRECT_URI, OAuth2ParameterNames.SCOPE);
+				OAuth2ParameterNames.REDIRECT_URI, OAuth2ParameterNames.SCOPE, PkceParameterNames.CODE_CHALLENGE);
 	}
 
 	private void assertAuthorizationCodeRequestWithAuthorizationCodeResult(
