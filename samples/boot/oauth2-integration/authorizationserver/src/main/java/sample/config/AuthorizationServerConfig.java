@@ -15,7 +15,10 @@
  */
 package sample.config;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
+import java.util.function.Function;
 
 import com.nimbusds.jose.jwk.JWKSet;
 import com.nimbusds.jose.jwk.RSAKey;
@@ -23,6 +26,7 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import sample.jose.Jwks;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -31,22 +35,28 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
+import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
+import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
 import org.springframework.security.oauth2.core.ClientAuthenticationMethod;
+import org.springframework.security.oauth2.core.authentication.OAuth2AuthenticationValidator;
+import org.springframework.security.oauth2.core.endpoint.OAuth2ParameterNames;
+import org.springframework.security.oauth2.core.endpoint.PkceParameterNames;
 import org.springframework.security.oauth2.core.oidc.OidcScopes;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.JdbcOAuth2AuthorizationService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationConsentService;
 import org.springframework.security.oauth2.server.authorization.OAuth2AuthorizationService;
+import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeRequestAuthenticationProvider;
 import org.springframework.security.oauth2.server.authorization.client.JdbcRegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
 import org.springframework.security.oauth2.server.authorization.client.RegisteredClientRepository;
 import org.springframework.security.oauth2.server.authorization.config.ClientSettings;
 import org.springframework.security.oauth2.server.authorization.config.ProviderSettings;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.util.matcher.RequestMatcher;
 
 /**
  * @author Joe Grandja
@@ -55,11 +65,56 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfig {
 
+	@Autowired
+	private RegisteredClientRepository registeredClientRepository;
+
+	@Autowired
+	private OAuth2AuthorizationService authorizationService;
+
+	@Autowired
+	private OAuth2AuthorizationConsentService authorizationConsentService;
+
+	// @formatter:off
 	@Bean
 	@Order(Ordered.HIGHEST_PRECEDENCE)
 	public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http) throws Exception {
-		OAuth2AuthorizationServerConfiguration.applyDefaultSecurity(http);
-		return http.formLogin(Customizer.withDefaults()).build();
+		OAuth2AuthorizationServerConfigurer<HttpSecurity> authorizationServerConfigurer =
+				new OAuth2AuthorizationServerConfigurer<>();
+		authorizationServerConfigurer
+				.authorizationEndpoint(authorizationEndpoint ->
+						authorizationEndpoint
+								.authenticationProvider(authorizationEndpointAuthenticationProvider()));
+		RequestMatcher endpointsMatcher = authorizationServerConfigurer.getEndpointsMatcher();
+
+		http
+				.requestMatcher(endpointsMatcher)
+				.authorizeRequests(authorizeRequests ->
+						authorizeRequests.anyRequest().authenticated()
+				)
+				.formLogin(Customizer.withDefaults())
+				.csrf(csrf -> csrf.ignoringRequestMatchers(endpointsMatcher))
+				.apply(authorizationServerConfigurer);
+		return http.build();
+	}
+	// @formatter:on
+
+	private AuthenticationProvider authorizationEndpointAuthenticationProvider() {
+		OAuth2AuthorizationCodeRequestAuthenticationProvider authorizationCodeRequestAuthenticationProvider =
+				new OAuth2AuthorizationCodeRequestAuthenticationProvider(
+						this.registeredClientRepository,
+						this.authorizationService,
+						this.authorizationConsentService);
+		authorizationCodeRequestAuthenticationProvider.setAuthenticationValidatorResolver(
+				createDefaultAuthenticationValidatorResolver());
+		return authorizationCodeRequestAuthenticationProvider;
+	}
+
+	private static Function<String, OAuth2AuthenticationValidator> createDefaultAuthenticationValidatorResolver() {
+		Map<String, OAuth2AuthenticationValidator> authenticationValidators = new HashMap<>();
+		authenticationValidators.put(OAuth2ParameterNames.REDIRECT_URI, new RedirectUriOAuth2AuthenticationValidator());
+		authenticationValidators.put(OAuth2ParameterNames.SCOPE, new ScopeOAuth2AuthenticationValidator());
+		authenticationValidators.put(PkceParameterNames.CODE_CHALLENGE, new CodeChallengeOAuth2AuthenticationValidator());
+		return authenticationValidators::get;
 	}
 
 	// @formatter:off
