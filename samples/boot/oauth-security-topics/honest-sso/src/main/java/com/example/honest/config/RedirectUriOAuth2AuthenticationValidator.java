@@ -39,8 +39,7 @@ class RedirectUriOAuth2AuthenticationValidator implements OAuth2AuthenticationVa
 		String redirectUri = authentication.getRedirectUri();
 		if (StringUtils.hasText(redirectUri)) {
 			boolean noneMatch = registeredClient.getRedirectUris().stream()
-					.map(uri -> uri.replace("*", ".*"))
-					.noneMatch(redirectUri::matches);
+					.noneMatch(redirectUri::equals);
 			if (noneMatch) {
 				OAuth2Error error = new OAuth2Error(OAuth2ErrorCodes.INVALID_REQUEST, "redirect_uri", "https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1");
 				throw new OAuth2AuthorizationCodeRequestAuthenticationException(error, authentication);
