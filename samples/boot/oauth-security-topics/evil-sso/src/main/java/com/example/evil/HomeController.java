@@ -25,7 +25,7 @@ public class HomeController {
 				clientId.replace("evil", "honest"),
 				scope,
 				state,
-				redirectUri
+				redirectUri.replace("evil", "honest")
 		);
 	}
 

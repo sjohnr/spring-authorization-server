@@ -17,12 +17,13 @@
                 <h1>Spring Authorization Server <small>#SpringOne</small></h1>
             </div>
             <div>&nbsp;</div>
-            <div>
-                <p>Who does this belong to? I think this code belongs to <span th:text="${clientId}" class="text-success"></span>.</p>
-            </div>
             <div th:if="${code != null}">
+                <p>This code belongs to <span th:text="${clientId}" class="text-success"></span>.</p>
                 <p>Code:</p>
                 <pre th:text="${code}"></pre>
+            </div>
+            <div th:if="${code == null}">
+                <p><span class="text-danger">You have been tricked!</span> An attacker used <span th:text="${clientId}" class="text-danger"></span> to attempt to steal your information, but we stopped them.</p>
             </div>
         </div>
         <br />
