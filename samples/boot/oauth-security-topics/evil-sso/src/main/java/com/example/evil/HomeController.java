@@ -13,8 +13,20 @@ public class HomeController {
 	}
 
 	@GetMapping("/oauth2/authorize")
-	public String authorize() {
-		return "redirect:http://honest-sso:9000/oauth2/authorize?response_type=code&client_id=honest-client&scope=message.read+message.write&state=12345678&redirect_uri=http://evil-sso:8090/.honest-client";
+	public String authorize(
+			@RequestParam("response_type") String responseType,
+			@RequestParam("client_id") String clientId,
+			@RequestParam("scope") String scope,
+			@RequestParam("state") String state,
+			@RequestParam("redirect_uri") String redirectUri) {
+		return String.format(
+				"redirect:http://honest-sso:9000/oauth2/authorize?response_type=%s&client_id=%s&scope=%s&state=%s&redirect_uri=%s",
+				responseType,
+				clientId.replace("evil", "honest"),
+				scope,
+				state,
+				redirectUri
+		);
 	}
 
 	@GetMapping("/.honest-client")
