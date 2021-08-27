@@ -1,0 +1,52 @@
+@import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap');
+
+html {
+    font-family: "Open Sans", sans-serif;
+}
+a, h1, h2, h3, h4, h5, h6 {
+    font-family: "Open Sans", sans-serif;
+}
+a:hover {
+    text-decoration: none;
+}
+.navbar {
+    background-color: transparent;
+}
+.navbar-brand {
+    min-height: 68px;
+    padding: 8px;
+}
+.nav > li > a {
+    background-color: inherit !important;
+    color: #191e1e !important;
+    font-size: 1.5rem;
+    font-weight: 700;
+    display: inline-block;
+    line-height: 38px;
+}
+.nav > li > a:hover {
+    color: #6db33f !important;
+}
+.nav-arrow {
+    transform: rotate(45deg) translateY(-6px);
+    -webkit-transform: rotate(45deg) translateY(-6px);
+    border: 0 solid #191e1e;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    display: inline-block;
+    padding: 3px;
+    margin-left: -7px;
+}
+.dropdown-menu {
+    padding: 25px 0;
+    border: 0;
+    border-radius: 5px;
+    box-shadow: 0 5px 30px 0 rgba(108, 135, 135, .5);
+}
+.dropdown-menu > li > a {
+    padding: 8px 20px;
+}
+.dropdown-menu > li > a:hover {
+    background-color: inherit;
+    color: #6db33f;
+}

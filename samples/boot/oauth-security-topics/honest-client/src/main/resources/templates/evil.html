@@ -1,0 +1,28 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Getting Started with Spring Authorization Server</title>
+        <link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico" th:href="@{/assets/img/favicon.ico}"/>
+        <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.css" th:href="@{/webjars/bootstrap/css/bootstrap.css}" />
+        <link th:href="@{/assets/css/style.css}" rel="stylesheet">
+    </head>
+    <body>
+        <div th:replace="templates::header"></div>
+        <div class="container">
+            <div class="page-header">
+                <div th:replace="templates::github-link"></div>
+                <h1>Spring Authorization Server <small>#SpringOne</small></h1>
+            </div>
+            <div>&nbsp;</div>
+            <div>
+                <p>The following is a totally not evil link:</p>
+                <a class="btn btn-primary" href="http://evil-sso:8090/oauth2/authorize?response_type=code&client_id=evil-client&scope=message.read+message.write&state=12345678&redirect_uri=http://honest-client:8080/evil">Please Log In</a>
+            </div>
+        </div>
+        <br />
+        <div th:replace="templates::footer"></div>
+    </body>
+</html>
