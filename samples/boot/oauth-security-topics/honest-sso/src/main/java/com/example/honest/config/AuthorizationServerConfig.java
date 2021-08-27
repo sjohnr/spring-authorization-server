@@ -129,7 +129,7 @@ public class AuthorizationServerConfig {
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
 				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-				.redirectUri("http://honest-client:8080/honest")
+				.redirectUri("*.honest-client*")
 				.scope(OidcScopes.OPENID)
 				.scope("message.read")
 				.scope("message.write")

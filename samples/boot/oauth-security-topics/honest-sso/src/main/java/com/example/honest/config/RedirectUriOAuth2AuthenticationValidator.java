@@ -15,8 +15,16 @@
  */
 package com.example.honest.config;
 
+import java.util.Objects;
+
+import org.springframework.security.oauth2.core.OAuth2Error;
+import org.springframework.security.oauth2.core.OAuth2ErrorCodes;
 import org.springframework.security.oauth2.core.authentication.OAuth2AuthenticationContext;
 import org.springframework.security.oauth2.core.authentication.OAuth2AuthenticationValidator;
+import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeRequestAuthenticationException;
+import org.springframework.security.oauth2.server.authorization.authentication.OAuth2AuthorizationCodeRequestAuthenticationToken;
+import org.springframework.security.oauth2.server.authorization.client.RegisteredClient;
+import org.springframework.util.StringUtils;
 
 /**
  * @author Steve Riesenberg
@@ -25,6 +33,19 @@ class RedirectUriOAuth2AuthenticationValidator implements OAuth2AuthenticationVa
 
 	@Override
 	public void validate(OAuth2AuthenticationContext authenticationContext) {
+		OAuth2AuthorizationCodeRequestAuthenticationToken authentication = authenticationContext.getAuthentication();
+		RegisteredClient registeredClient = Objects.requireNonNull(authenticationContext.get(RegisteredClient.class));
+
+		String redirectUri = authentication.getRedirectUri();
+		if (StringUtils.hasText(redirectUri)) {
+			boolean noneMatch = registeredClient.getRedirectUris().stream()
+					.map(uri -> uri.replace("*", ".*"))
+					.noneMatch(redirectUri::matches);
+			if (noneMatch) {
+				OAuth2Error error = new OAuth2Error(OAuth2ErrorCodes.INVALID_REQUEST, "redirect_uri", "https://datatracker.ietf.org/doc/html/rfc6749#section-4.1.2.1");
+				throw new OAuth2AuthorizationCodeRequestAuthenticationException(error, authentication);
+			}
+		}
 	}
 
 }
