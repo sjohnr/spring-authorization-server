@@ -16,6 +16,7 @@ import org.springframework.ui.Model;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.client.RestTemplate;
@@ -52,19 +53,17 @@ public class HomeController {
 		return "evil";
 	}
 
-	@GetMapping("/authorized")
-	public String authorize(Model model, @RequestParam(required = false) String code, @RequestParam(required = false) String state) {
-		model.addAttribute("code", code);
-		model.addAttribute("state", state);
-		return "authorized";
-	}
+	@PostMapping("/authorized/{clientId}")
+	public String getToken(Model model, @RequestParam String code, @PathVariable String clientId) {
+		if (!this.clientId.equals(clientId)) {
+			model.addAttribute("clientId", this.clientId);
+			return "authorized";
+		}
 
-	@PostMapping("/authorized")
-	public String getToken(Model model, @RequestParam String code) {
 		MultiValueMap<String, String> parameters = new LinkedMultiValueMap<>();
 		parameters.add("grant_type", "authorization_code");
 		parameters.add("code", code);
-		parameters.add("redirect_uri", "http://honest-client:8080/authorized");
+		parameters.add("redirect_uri", "http://honest-client:8080/authorized/" + clientId);
 
 		HttpHeaders headers = new HttpHeaders();
 		headers.setContentType(MediaType.APPLICATION_FORM_URLENCODED);

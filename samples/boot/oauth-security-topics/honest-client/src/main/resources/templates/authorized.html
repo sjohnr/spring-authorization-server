@@ -17,12 +17,8 @@
                 <h1>Spring Authorization Server <small>#SpringOne</small></h1>
             </div>
             <div>&nbsp;</div>
-            <div th:if="${code != null}">
-                <p>The following hidden form will request a token.</p>
-                <form th:action="@{/authorized}" method="post">
-                    <input name="code" type="hidden" th:value="${code}" />
-                    <input type="submit" class="btn btn-primary" value="Request Token" />
-                </form>
+            <div th:if="${accessToken == null}">
+                <p><span class="text-danger">You have been tricked!</span> An attacker used <span th:text="${clientId}" class="text-danger"></span> to attempt to steal your information, but we stopped them.</p>
             </div>
             <div th:if="${accessToken != null}">
                 <p>Access Token:</p>

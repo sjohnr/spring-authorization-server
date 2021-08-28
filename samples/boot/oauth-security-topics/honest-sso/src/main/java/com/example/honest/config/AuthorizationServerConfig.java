@@ -86,6 +86,7 @@ public class AuthorizationServerConfig {
 			.authorizationEndpoint(authorizationEndpoint ->
 				authorizationEndpoint
 					.authenticationProvider(authorizationEndpointAuthenticationProvider())
+					.authorizationResponseHandler(authorizationResponseHandler())
 			);
 
 		http
@@ -112,6 +113,10 @@ public class AuthorizationServerConfig {
 		return authorizationCodeRequestAuthenticationProvider;
 	}
 
+	private FormPostResponseModeAuthenticationSuccessHandler authorizationResponseHandler() {
+		return new FormPostResponseModeAuthenticationSuccessHandler();
+	}
+
 	private static Function<String, OAuth2AuthenticationValidator> createDefaultAuthenticationValidatorResolver() {
 		Map<String, OAuth2AuthenticationValidator> authenticationValidators = new HashMap<>();
 		authenticationValidators.put(OAuth2ParameterNames.REDIRECT_URI, new RedirectUriOAuth2AuthenticationValidator());
@@ -129,7 +134,7 @@ public class AuthorizationServerConfig {
 				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
 				.authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
 				.authorizationGrantType(AuthorizationGrantType.CLIENT_CREDENTIALS)
-				.redirectUri("http://honest-client:8080/authorized")
+				.redirectUri("http://honest-client:8080/authorized/honest-client")
 				.scope(OidcScopes.OPENID)
 				.scope("message.read")
 				.scope("message.write")
