@@ -26,7 +26,6 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.Ordered;
@@ -35,8 +34,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.ObjectPostProcessor;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configurers.oauth2.server.authorization.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.core.AuthorizationGrantType;
@@ -65,15 +64,6 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 @Configuration(proxyBeanMethods = false)
 public class AuthorizationServerConfig {
 
-	@Autowired
-	private RegisteredClientRepository registeredClientRepository;
-
-	@Autowired
-	private OAuth2AuthorizationService authorizationService;
-
-	@Autowired
-	private OAuth2AuthorizationConsentService authorizationConsentService;
-
 	// @formatter:off
 	@Bean
 	@Order(Ordered.HIGHEST_PRECEDENCE)
@@ -85,9 +75,18 @@ public class AuthorizationServerConfig {
 		authorizationServerConfigurer
 			.authorizationEndpoint(authorizationEndpoint ->
 				authorizationEndpoint
-					.authenticationProvider(authorizationEndpointAuthenticationProvider())
 					.authorizationResponseHandler(authorizationResponseHandler())
-			);
+			)
+			// .withObjectPostProcessor(OAuth2AuthorizationCodeRequestAuthenticationProvider.class,
+			// 		provider -> provider.setAuthenticationValidatorResolver(createDefaultAuthenticationValidatorResolver())
+			// )
+			.withObjectPostProcessor(new ObjectPostProcessor<OAuth2AuthorizationCodeRequestAuthenticationProvider>() {
+				@Override
+				public <O extends OAuth2AuthorizationCodeRequestAuthenticationProvider> O postProcess(O object) {
+					object.setAuthenticationValidatorResolver(createDefaultAuthenticationValidatorResolver());
+					return object;
+				}
+			});
 
 		http
 			.requestMatcher(endpointsMatcher)
@@ -101,17 +100,6 @@ public class AuthorizationServerConfig {
 		return http.build();
 	}
 	// @formatter:on
-
-	private AuthenticationProvider authorizationEndpointAuthenticationProvider() {
-		OAuth2AuthorizationCodeRequestAuthenticationProvider authorizationCodeRequestAuthenticationProvider =
-				new OAuth2AuthorizationCodeRequestAuthenticationProvider(
-						this.registeredClientRepository,
-						this.authorizationService,
-						this.authorizationConsentService);
-		authorizationCodeRequestAuthenticationProvider.setAuthenticationValidatorResolver(
-				createDefaultAuthenticationValidatorResolver());
-		return authorizationCodeRequestAuthenticationProvider;
-	}
 
 	private FormPostResponseModeAuthenticationSuccessHandler authorizationResponseHandler() {
 		return new FormPostResponseModeAuthenticationSuccessHandler();
