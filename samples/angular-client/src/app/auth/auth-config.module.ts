@@ -8,13 +8,12 @@ import { AuthModule } from 'angular-auth-oidc-client';
       authority: 'http://localhost:9000',
       redirectUrl: window.location.origin,
       postLogoutRedirectUri: window.location.origin,
-      clientId: 'public-client',
-      scope: 'openid message.read message.write',
+      clientId: 'please-enter-clientId',
+      scope: 'please-enter-scopes', // 'openid profile ' + your scopes
       responseType: 'code',
       silentRenew: true,
       silentRenewUrl: window.location.origin + '/silent-renew.html',
       renewTimeBeforeTokenExpiresInSeconds: 10,
-      autoUserInfo: false
     }
   })],
   exports: [AuthModule],

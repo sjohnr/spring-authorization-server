@@ -48,6 +48,7 @@ public class DefaultSecurityConfig {
 					.requestMatchers("/assets/**", "/webjars/**", "/login").permitAll()
 					.anyRequest().authenticated()
 			)
+			.cors(Customizer.withDefaults())
 			.formLogin(Customizer.withDefaults())
 			.apply(federatedIdentityConfigurer);
 		return http.build();

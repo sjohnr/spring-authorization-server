@@ -4,16 +4,7 @@
     </div>
     <ul class="list-group">
         <li class="list-group-item">
-            <a [routerLink]="['/authorize']" [queryParams]="{grant_type: 'authorization_code', client_type: 'public'}"><span style="font-size: medium;">Authorization Code with Public Client</span>&nbsp;&nbsp;<small class="text-muted">(Login to Spring Authorization Server using: user1/password)</small></a>
-        </li>
-        <li class="list-group-item">
-            <a [routerLink]="['/authorize']" [queryParams]="{grant_type: 'authorization_code', client_type: 'confidential'}"><span style="font-size: medium;">Authorization Code with Confidential Client</span></a>
-        </li>
-        <li class="list-group-item">
-            <a [routerLink]="['/authorize']" [queryParams]="{grant_type: 'client_credentials', client_type: 'confidential'}"><span style="font-size: medium;">Client Credentials with Confidential Client</span></a>
-        </li>
-        <li class="list-group-item">
-            <a [routerLink]="['/authorize']" [queryParams]="{grant_type: 'authorization_code', client_type: 'token_relay'}"><span style="font-size: medium;">Authorization Code with Token Relay</span></a>
+            <a [routerLink]="['/authorize']"><span style="font-size: medium;">Authorization Code</span>&nbsp;&nbsp;<small class="text-muted">(Login to Spring Authorization Server using: user1/password)</small></a>
         </li>
     </ul>
     <div class="panel-footer">

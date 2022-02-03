@@ -17,32 +17,27 @@ package sample.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.config.annotation.web.builders.HttpSecurity;
-import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 /**
- * @author Joe Grandja
- * @since 0.0.1
+ * @author Steve Riesenberg
+ * @since 0.2.3
  */
-@EnableWebSecurity
-@Configuration(proxyBeanMethods = false)
-public class ResourceServerConfig {
+@Configuration
+public class CorsConfig {
 
-	// @formatter:off
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-		http
-			.securityMatcher("/messages/**")
-				.authorizeHttpRequests()
-					.requestMatchers("/messages/**").hasAuthority("SCOPE_message.read")
-					.and()
-			.cors()
-				.and()
-			.oauth2ResourceServer()
-				.jwt();
-		return http.build();
+	public CorsConfigurationSource corsConfigurationSource() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		CorsConfiguration config = new CorsConfiguration();
+		config.addAllowedHeader("*");
+		config.addAllowedMethod("*");
+		config.addAllowedOrigin("http://127.0.0.1:4200");
+		config.setAllowCredentials(true);
+		source.registerCorsConfiguration("/**", config);
+		return source;
 	}
-	// @formatter:on
 
 }

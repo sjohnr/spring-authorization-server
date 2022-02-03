@@ -16,16 +16,11 @@
           <li class="dropdown" *ngIf="isAuthenticated">
             <a id="user-menu" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{username}}</a><span class="nav-arrow"></span>
             <ul class="dropdown-menu">
-              <li><a href="http://127.0.0.1:8080/authorize?grant_type=authorization_code">Authorize Confidential Client</a></li>
-              <li><a id="sign-out" href="" (click)="logout()">Sign Out</a></li>
+              <li><a id="sign-out" href="" (click)="logout()">Log Out</a></li>
             </ul>
           </li>
           <li *ngIf="!isAuthenticated">
-            <a id="login-menu" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Log In</a><span class="nav-arrow"></span>
-            <ul class="dropdown-menu">
-              <li><a href="" (click)="login()">Login as Public Client</a></li>
-              <li><a href="http://127.0.0.1:8080">Login as Confidential Client</a></li>
-            </ul>
+            <a id="login-menu" href="" (click)="login()">Log In</a>
           </li>
         </ul>
       </div><!--/.nav-collapse -->
