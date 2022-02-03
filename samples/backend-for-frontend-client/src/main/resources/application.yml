@@ -12,7 +12,7 @@ spring:
             client-secret: secret
             authorization-grant-type: authorization_code
             redirect-uri: "http://127.0.0.1:8080/login/oauth2/code/{registrationId}"
-            scope: openid,message.read,message.write
+            scope: openid
             client-name: messaging-client-oidc
           messaging-client-authorization-code:
             provider: spring
@@ -32,15 +32,6 @@ spring:
         provider:
           spring:
             issuer-uri: http://localhost:9000
-  cloud:
-    gateway:
-      routes:
-        - id: messages
-          uri: http://localhost:8090
-          predicates:
-            - Path=/messages
-          filters:
-            - TokenRelay=
 
 messages:
   base-uri: http://localhost:8090/messages
