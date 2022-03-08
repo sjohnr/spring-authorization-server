@@ -37,8 +37,6 @@ public class ResourceServerConfig {
 				.authorizeHttpRequests()
 					.requestMatchers("/messages/**").hasAuthority("SCOPE_message.read")
 					.and()
-			.cors()
-				.and()
 			.oauth2ResourceServer()
 				.jwt();
 		return http.build();

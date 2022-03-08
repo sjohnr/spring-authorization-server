@@ -14,9 +14,7 @@ export class AppComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.http.get<any>('http://127.0.0.1:8080/userinfo', {
-      withCredentials: true
-    }).subscribe((user) => {
+    this.http.get<any>('/userinfo').subscribe((user) => {
       this.isAuthenticated = true;
       this.username = user.name;
     });
@@ -28,7 +26,7 @@ export class AppComponent implements OnInit {
   }
 
   logout() {
-    this.isAuthenticated = false;
+    this.http.post('/logout', null).subscribe(() => this.isAuthenticated = false);
     return false;
   }
 }

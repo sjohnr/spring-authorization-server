@@ -19,6 +19,7 @@ import reactor.core.publisher.Mono;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.reactive.EnableWebFluxSecurity;
@@ -33,7 +34,14 @@ import org.springframework.security.web.server.SecurityWebFilterChain;
 import org.springframework.security.web.server.ServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationEntryPoint;
 import org.springframework.security.web.server.authentication.RedirectServerAuthenticationSuccessHandler;
+import org.springframework.security.web.server.authentication.ServerAuthenticationSuccessHandler;
+import org.springframework.security.web.server.authentication.logout.DelegatingServerLogoutHandler;
+import org.springframework.security.web.server.authentication.logout.HttpStatusReturningServerLogoutSuccessHandler;
+import org.springframework.security.web.server.authentication.logout.SecurityContextServerLogoutHandler;
+import org.springframework.security.web.server.authentication.logout.ServerLogoutHandler;
+import org.springframework.security.web.server.authentication.logout.ServerLogoutSuccessHandler;
 import org.springframework.security.web.server.csrf.CookieServerCsrfTokenRepository;
+import org.springframework.security.web.server.csrf.CsrfServerLogoutHandler;
 import org.springframework.security.web.server.csrf.CsrfToken;
 import org.springframework.security.web.server.util.matcher.MediaTypeServerWebExchangeMatcher;
 import org.springframework.web.server.WebFilter;
@@ -57,11 +65,16 @@ public class SecurityConfig {
 				exceptionHandling.authenticationEntryPoint(authenticationEntryPoint())
 			)
 			.csrf(csrf ->
-				csrf.csrfTokenRepository(CookieServerCsrfTokenRepository.withHttpOnlyFalse())
+				csrf.csrfTokenRepository(csrfTokenRepository())
 			)
 			.cors(Customizer.withDefaults())
 			.oauth2Login(oauth2 ->
 				oauth2.authenticationSuccessHandler(authenticationSuccessHandler())
+			)
+			.logout(logout ->
+				logout
+					.logoutHandler(logoutHandler())
+					.logoutSuccessHandler(logoutSuccessHandler())
 			)
 			.oauth2Client(Customizer.withDefaults());
 		// @formatter:on
@@ -79,8 +92,22 @@ public class SecurityConfig {
 				new DelegateEntry(textHtmlMatcher, webAuthenticationEntryPoint));
 	}
 
-	private RedirectServerAuthenticationSuccessHandler authenticationSuccessHandler() {
+	private ServerAuthenticationSuccessHandler authenticationSuccessHandler() {
 		return new RedirectServerAuthenticationSuccessHandler("http://127.0.0.1:4200");
+	}
+
+	private ServerLogoutHandler logoutHandler() {
+		return new DelegatingServerLogoutHandler(
+				new SecurityContextServerLogoutHandler(),
+				new CsrfServerLogoutHandler(csrfTokenRepository()));
+	}
+
+	private ServerLogoutSuccessHandler logoutSuccessHandler() {
+		return new HttpStatusReturningServerLogoutSuccessHandler(HttpStatus.OK);
+	}
+
+	private CookieServerCsrfTokenRepository csrfTokenRepository() {
+		return CookieServerCsrfTokenRepository.withHttpOnlyFalse();
 	}
 
 	@Bean

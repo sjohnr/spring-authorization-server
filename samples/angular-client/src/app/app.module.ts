@@ -6,7 +6,9 @@ import { AppComponent } from './app.component';
 import { AuthConfigModule } from './auth/auth-config.module';
 import { IndexComponent } from './index/index.component';
 import { AuthorizeComponent } from './authorize/authorize.component';
-import { HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule, HttpClientXsrfModule } from '@angular/common/http';
+import { ReactiveFormsModule } from '@angular/forms';
+import { GatewayInterceptor } from './interceptors/gateway.interceptor';
 
 @NgModule({
   declarations: [
@@ -16,11 +18,15 @@ import { HttpClientModule } from '@angular/common/http';
   ],
   imports: [
     BrowserModule,
+    ReactiveFormsModule,
     HttpClientModule,
+    HttpClientXsrfModule,
     AppRoutingModule,
     AuthConfigModule
   ],
-  providers: [],
+  providers: [
+    { provide: HTTP_INTERCEPTORS, useClass: GatewayInterceptor, multi: true }
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }
