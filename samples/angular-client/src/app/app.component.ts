@@ -14,11 +14,16 @@ export class AppComponent implements OnInit {
   constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    // TODO: Check auth
+    this.http.get<any>('http://127.0.0.1:8080/userinfo', {
+      withCredentials: true
+    }).subscribe((user) => {
+      this.isAuthenticated = true;
+      this.username = user.name;
+    });
   }
 
   login() {
-    // TODO: Log in
+    window.location.href = 'http://127.0.0.1:8080';
     return false;
   }
 
