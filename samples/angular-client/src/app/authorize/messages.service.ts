@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable, of } from 'rxjs';
+import { catchError, Observable, of } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +9,12 @@ export class MessagesService {
   constructor(private http: HttpClient) { }
 
   getMessages(): Observable<string[]> {
-    // TODO: Request data from backend
-    return of(['Please log in.']);
+    return this.http.get<string[]>('http://127.0.0.1:8080/messages', {
+      withCredentials: true
+    }).pipe(catchError((error) => {
+      console.error(error);
+      window.location.href = 'http://127.0.0.1:8080/authorize';
+      return of(['Please log in.']);
+    }))
   }
 }
