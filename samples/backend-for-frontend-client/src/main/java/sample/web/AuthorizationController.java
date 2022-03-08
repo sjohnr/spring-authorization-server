@@ -15,9 +15,19 @@
  */
 package sample.web;
 
+import reactor.core.publisher.Mono;
+
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.oauth2.client.OAuth2AuthorizedClient;
+import org.springframework.security.oauth2.client.annotation.RegisteredOAuth2AuthorizedClient;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
+
+import static org.springframework.security.oauth2.client.web.reactive.function.client.ServerOAuth2AuthorizedClientExchangeFilterFunction.oauth2AuthorizedClient;
 
 /**
  * @author Steve Riesenberg
@@ -36,6 +46,27 @@ public class AuthorizationController {
 		this.webClient = webClient;
 		this.messagesBaseUri = messagesBaseUri;
 		this.appBaseUri = appBaseUri;
+	}
+
+	@GetMapping(value = "/authorize", produces = MediaType.TEXT_HTML_VALUE)
+	public Mono<ResponseEntity<Void>> authorizeClient(
+			@RegisteredOAuth2AuthorizedClient("messaging-client-authorization-code")
+					OAuth2AuthorizedClient authorizedClient) {
+		ResponseEntity<Void> responseEntity = ResponseEntity.status(HttpStatus.FOUND)
+				.header("Location", this.appBaseUri + "/authorize")
+				.build();
+		return Mono.just(responseEntity);
+	}
+
+	@GetMapping(value = "/messages", produces = MediaType.APPLICATION_JSON_VALUE)
+	public Mono<String[]> getMessages(
+			@RegisteredOAuth2AuthorizedClient("messaging-client-authorization-code")
+					OAuth2AuthorizedClient authorizedClient) {
+		return this.webClient.get()
+				.uri(this.messagesBaseUri)
+				.attributes(oauth2AuthorizedClient(authorizedClient))
+				.retrieve()
+				.bodyToMono(String[].class);
 	}
 
 }
