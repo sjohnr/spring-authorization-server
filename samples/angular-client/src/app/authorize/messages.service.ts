@@ -14,7 +14,7 @@ export class MessagesService {
     }).pipe(catchError((error) => {
       console.error(error);
       window.location.href = 'http://127.0.0.1:8080/authorize';
-      return of(['Please log in.']);
-    }))
+      return of([]);
+    }));
   }
 }
