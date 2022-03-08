@@ -1,5 +1,4 @@
 import { Component, OnInit } from '@angular/core';
-import { OidcSecurityService } from 'angular-auth-oidc-client';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
@@ -12,24 +11,18 @@ export class AppComponent implements OnInit {
   isAuthenticated = false;
   username = '';
 
-  constructor(private http: HttpClient, private oidcSecurityService: OidcSecurityService) {}
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    this.oidcSecurityService.checkAuth().subscribe(({ isAuthenticated, userData }) => {
-      this.isAuthenticated = isAuthenticated;
-      if (userData) {
-        this.username = userData.sub;
-      }
-    });
+    // TODO: Check auth
   }
 
   login() {
-    this.oidcSecurityService.authorize();
+    // TODO: Log in
     return false;
   }
 
   logout() {
-    this.oidcSecurityService.logoff();
     this.isAuthenticated = false;
     return false;
   }
