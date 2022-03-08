@@ -73,13 +73,14 @@ public class AuthorizationServerConfig {
 			)
 			.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 		// @formatter:on
+		http.cors(Customizer.withDefaults());
 		return http.build();
 	}
 
 	// @formatter:off
 	@Bean
 	public RegisteredClientRepository registeredClientRepository(JdbcTemplate jdbcTemplate) {
-		RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+		RegisteredClient confidentialClient = RegisteredClient.withId(UUID.randomUUID().toString())
 				.clientId("messaging-client")
 				.clientSecret("{noop}secret")
 				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
@@ -94,10 +95,22 @@ public class AuthorizationServerConfig {
 				.scope("message.write")
 				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
 				.build();
+		RegisteredClient publicClient = RegisteredClient.withId(UUID.randomUUID().toString())
+				.clientId("public-client")
+				.clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
+				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+				.redirectUri("http://127.0.0.1:4200")
+				.redirectUri("http://127.0.0.1:4200/silent-renew.html")
+				.scope(OidcScopes.OPENID)
+				.scope("message.read")
+				.scope("message.write")
+				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).requireProofKey(true).build())
+				.build();
 
 		// Save registered client in db as if in-memory
 		JdbcRegisteredClientRepository registeredClientRepository = new JdbcRegisteredClientRepository(jdbcTemplate);
-		registeredClientRepository.save(registeredClient);
+		registeredClientRepository.save(confidentialClient);
+		registeredClientRepository.save(publicClient);
 
 		return registeredClientRepository;
 	}
