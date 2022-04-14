@@ -1,0 +1,14 @@
+= Multi-factor Authentication Sample
+
+Log in with the following credentials:
+
+* `user` / `password`
+* `admin` / `password`
+
+Create a Google Authenticator account with the following secret:
+
+* `QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK`
+
+The answer to the security question is:
+
+* `pepperoni`

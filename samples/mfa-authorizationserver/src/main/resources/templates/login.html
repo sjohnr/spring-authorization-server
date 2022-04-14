@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Log In</title>
+        <link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico" th:href="@{/assets/img/favicon.ico}"/>
+        <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.css" th:href="@{/webjars/bootstrap/css/bootstrap.css}" />
+        <link th:href="@{/assets/css/style.css}" rel="stylesheet">
+        <link th:href="@{/assets/css/signin.css}" rel="stylesheet">
+    </head>
+    <body>
+        <div th:replace="templates::header"></div>
+        <div class="container">
+            <div class="alert alert-danger" th:if="${param.error}">Invalid credentials. Please try again.</div>
+            <div class="card card-container">
+                <img id="profile-img" class="profile-img-card" src="//ssl.gstatic.com/accounts/ui/avatar_2x.png" alt="Avatar" />
+                <p id="profile-name" class="profile-name-card"></p>
+                <form class="form-signin" method="post" th:action="@{/login}">
+                    <span id="profile-username" class="profile-username"></span>
+                    <label for="username" class="sr-only">Email address</label>
+                    <input id="username" type="text" name="username" class="form-control" placeholder="Email address" required autofocus>
+                    <label for="password" class="sr-only">Password</label>
+                    <input id="password" type="password" name="password" class="form-control" placeholder="Password" required>
+                    <button id="submit-button" type="submit" class="btn btn-lg btn-primary btn-block btn-signin">Sign in</button>
+                </form><!-- /form -->
+                <a href="#" class="forgot-password">Forgot your password?</a>
+                <br />
+                <a id="another-user" href="#" class="forgot-password" style="display: none;">Choose another user</a>
+            </div><!-- /card-container -->
+        </div><!-- /container -->
+        <br />
+        <div th:replace="templates::footer"></div>
+        <script src="/webjars/jquery/jquery.min.js" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+        <script src="/webjars/bootstrap/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+        <script src="/assets/js/signin.js" th:src="@{/assets/js/signin.js}"></script>
+    </body>
+</html>

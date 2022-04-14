@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+    <head>
+        <meta charset="utf-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>Profile</title>
+        <link rel="icon" type="image/x-icon" href="/assets/img/favicon.ico" th:href="@{/assets/img/favicon.ico}"/>
+        <link rel="stylesheet" href="/webjars/bootstrap/css/bootstrap.css" th:href="@{/webjars/bootstrap/css/bootstrap.css}" />
+        <link th:href="@{/assets/css/style.css}" rel="stylesheet">
+    </head>
+    <body>
+        <div th:replace="templates::header"></div>
+        <div class="container">
+            <div class="page-header">
+                <div style="float:right;">
+                    <a target="_blank" th:href="@{https://github.com/sjohnr/spring-security-mfa-login-demo}">
+                        <img th:src="@{/assets/img/github.png}">
+                    </a>
+                </div>
+                <h1>User Profile</h1>
+            </div>
+
+        </div>
+        <br />
+        <div th:replace="templates::footer"></div>
+        <script src="/webjars/jquery/jquery.min.js" th:src="@{/webjars/jquery/jquery.min.js}"></script>
+        <script src="/webjars/bootstrap/js/bootstrap.min.js" th:src="@{/webjars/bootstrap/js/bootstrap.min.js}"></script>
+    </body>
+</html>
