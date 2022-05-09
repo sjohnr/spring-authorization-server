@@ -1,0 +1,22 @@
+plugins {
+	id "io.spring.convention.spring-module"
+}
+
+description = "Spring Boot AutoConfigure for Spring Authorization Server"
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+dependencies {
+	management platform(project(":spring-authorization-server-dependencies"))
+	management platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
+	annotationProcessor platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
+
+	api "org.springframework.boot:spring-boot-autoconfigure"
+	optional project(":spring-security-oauth2-authorization-server")
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+	testImplementation "org.springframework.boot:spring-boot-starter-test"
+}
