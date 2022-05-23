@@ -58,8 +58,8 @@ public class UserInfoRepository {
 
     private UserInfo userInfo(String email, String name, String profileImage) {
         // Simulate what would be stored in the database
-        String encodedPassword = this.passwordEncoder.encode("password");
-        String encodedAnswer = this.passwordEncoder.encode("pepperoni");
+        String encodedPassword = "{bcrypt}$2a$10$OlqQ1w9ViNA5ht4h6hP4A.PnkujKBhQHdU3oyuBsMQteemSsKopqq"; //this.passwordEncoder.encode("password");
+        String encodedAnswer = "{bcrypt}$2a$10$bE8dlFNs1/bTwU9FWvuP6uh60QIycm7eLquUa8G7Sjfh1qMTPkcaG"; //this.passwordEncoder.encode("pepperoni");
         String base32Secret = "QDWSM3OYBPGTEVSPB5FKVDM3CSNCWHVK";
         // String hexSecret = "80ed266dd80bcd32564f0f4aaa8d9b149a2b1eaa";
         String encryptedSecret = new String(Hex.encode(this.bytesEncryptor.encrypt(base32Secret.getBytes(StandardCharsets.UTF_8))));
