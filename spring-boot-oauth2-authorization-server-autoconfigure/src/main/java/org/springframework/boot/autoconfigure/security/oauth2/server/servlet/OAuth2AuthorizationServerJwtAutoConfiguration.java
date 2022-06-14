@@ -16,35 +16,26 @@
 package org.springframework.boot.autoconfigure.security.oauth2.server.servlet;
 
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.AutoConfigureBefore;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityAutoConfiguration;
-import org.springframework.boot.autoconfigure.security.servlet.SecurityFilterAutoConfiguration;
 import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.annotation.Import;
-import org.springframework.security.config.annotation.configuration.ObjectPostProcessorConfiguration;
 import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 
 /**
- * {@link EnableAutoConfiguration Auto-configuration} for OAuth2 authorization server support.
- *
- * <p>
- * <strong>Note:</strog> This configuration and {@link OAuth2AuthorizationServerJwtAutoConfiguration} work together to
- * ensure that the {@link org.springframework.security.config.annotation.ObjectPostProcessor} is defined
- * <strong>BEFORE</strong> {@link UserDetailsServiceAutoConfiguration} so that a
- * {@link org.springframework.security.core.userdetails.UserDetailsService} can be created if necessary.
+ * {@link EnableAutoConfiguration Auto-configuration} for JWT support for endpoints of the OAuth2 authorization server
+ * that require it (e.g. User Info, Client Registration).
  *
  * @author Steve Riesenberg
- * @see OAuth2AuthorizationServerJwtAutoConfiguration
+ * @see OAuth2AuthorizationServerAutoConfiguration
  */
 @AutoConfiguration
-@AutoConfigureBefore({ SecurityAutoConfiguration.class, UserDetailsServiceAutoConfiguration.class, SecurityFilterAutoConfiguration.class })
+@AutoConfigureAfter(UserDetailsServiceAutoConfiguration.class)
 @ConditionalOnClass(OAuth2Authorization.class)
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-@Import({ OAuth2ProviderConfiguration.class, OAuth2AuthorizationServerWebSecurityConfiguration.class,
-		ObjectPostProcessorConfiguration.class })
-public class OAuth2AuthorizationServerAutoConfiguration {
+@Import(OAuth2AuthorizationServerJwtConfiguration.class)
+public class OAuth2AuthorizationServerJwtAutoConfiguration {
 
 }

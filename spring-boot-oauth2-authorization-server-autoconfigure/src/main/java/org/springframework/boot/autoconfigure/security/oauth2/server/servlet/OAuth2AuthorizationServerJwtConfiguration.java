@@ -28,33 +28,22 @@ import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.boot.autoconfigure.AutoConfigureAfter;
-import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.security.servlet.UserDetailsServiceAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Role;
 import org.springframework.security.config.annotation.web.configuration.OAuth2AuthorizationServerConfiguration;
 import org.springframework.security.oauth2.jwt.JwtDecoder;
-import org.springframework.security.oauth2.server.authorization.OAuth2Authorization;
 
 /**
- * {@link EnableAutoConfiguration Auto-configuration} for bearer token support for endpoints of the OAuth2 authorization
- * server that require it (e.g. User Info, Client Registration).
- *
  * @author Steve Riesenberg
- * @see OAuth2AuthorizationServerAutoConfiguration
  */
 @Configuration(proxyBeanMethods = false)
-@AutoConfigureAfter(UserDetailsServiceAutoConfiguration.class)
-@ConditionalOnClass(OAuth2Authorization.class)
-@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
-public class OAuth2BearerTokenEndpointAutoConfiguration {
+class OAuth2AuthorizationServerJwtConfiguration {
 
 	@Bean
+	@ConditionalOnClass(JwtDecoder.class)
 	@ConditionalOnMissingBean
 	JwtDecoder jwtDecoder(JWKSource<SecurityContext> jwkSource) {
 		return OAuth2AuthorizationServerConfiguration.jwtDecoder(jwkSource);
@@ -62,6 +51,7 @@ public class OAuth2BearerTokenEndpointAutoConfiguration {
 
 	@Bean
 	@Role(BeanDefinition.ROLE_INFRASTRUCTURE)
+	@ConditionalOnClass(JWKSource.class)
 	@ConditionalOnMissingBean
 	JWKSource<SecurityContext> jwkSource() {
 		KeyPair keyPair = generateRsaKey();
@@ -83,8 +73,7 @@ public class OAuth2BearerTokenEndpointAutoConfiguration {
 			KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
 			keyPairGenerator.initialize(2048);
 			keyPair = keyPairGenerator.generateKeyPair();
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new IllegalStateException(ex);
 		}
 		return keyPair;
