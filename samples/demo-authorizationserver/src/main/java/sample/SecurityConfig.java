@@ -35,6 +35,9 @@ import org.springframework.security.oauth2.server.authorization.settings.ClientS
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 
 @Configuration
 public class SecurityConfig {
@@ -56,7 +59,7 @@ public class SecurityConfig {
 			// Accept access tokens for User Info and/or Client Registration
 			.oauth2ResourceServer(OAuth2ResourceServerConfigurer::jwt);
 
-		return http.build();
+		return http.cors(Customizer.withDefaults()).build();
 	}
 
 	@Bean
@@ -71,7 +74,19 @@ public class SecurityConfig {
 			// authorization server filter chain
 			.formLogin(Customizer.withDefaults());
 
-		return http.build();
+		return http.cors(Customizer.withDefaults()).build();
+	}
+
+	@Bean
+	public CorsConfigurationSource corsConfigurationSource() {
+		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+		CorsConfiguration config = new CorsConfiguration();
+		config.addAllowedHeader("*");
+		config.addAllowedMethod("*");
+		config.addAllowedOrigin("http://127.0.0.1:4200");
+		config.setAllowCredentials(true);
+		source.registerCorsConfiguration("/**", config);
+		return source;
 	}
 
 	@Bean
@@ -87,7 +102,19 @@ public class SecurityConfig {
 
 	@Bean
 	public RegisteredClientRepository registeredClientRepository() {
-		RegisteredClient registeredClient = RegisteredClient.withId(UUID.randomUUID().toString())
+		RegisteredClient publicClient = RegisteredClient.withId(UUID.randomUUID().toString())
+				.clientId("public-client")
+				.clientAuthenticationMethod(ClientAuthenticationMethod.NONE)
+				.authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
+				.redirectUri("http://127.0.0.1:4200")
+				.redirectUri("http://127.0.0.1:4200/silent-renew.html")
+				.scope(OidcScopes.OPENID)
+				.scope(OidcScopes.PROFILE)
+				.scope("message.read")
+				.scope("message.write")
+				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).requireProofKey(true).build())
+				.build();
+		RegisteredClient confidentialClient = RegisteredClient.withId(UUID.randomUUID().toString())
 				.clientId("messaging-client")
 				.clientSecret("{noop}secret")
 				.clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
@@ -100,10 +127,10 @@ public class SecurityConfig {
 				.scope(OidcScopes.PROFILE)
 				.scope("message.read")
 				.scope("message.write")
-				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
+				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).requireProofKey(true).build())
 				.build();
 
-		return new InMemoryRegisteredClientRepository(registeredClient);
+		return new InMemoryRegisteredClientRepository(publicClient, confidentialClient);
 	}
 
 	@Bean
