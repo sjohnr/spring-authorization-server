@@ -1,0 +1,53 @@
+<!-- Header -->
+<div id="header">
+  <nav class="navbar navbar-default">
+    <div class="container">
+      <div class="navbar-header">
+        <button aria-controls="navbar" aria-expanded="false" class="navbar-toggle collapsed" data-target="#navbar" data-toggle="collapse" type="button">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" routerLink="/"><img src="/assets/img/spring-logo.png" alt="spring logo"></a>
+      </div>
+      <div class="navbar-collapse collapse" id="navbar">
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown" *ngIf="isAuthenticated">
+            <a id="user-menu" href="" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">{{username}}</a><span class="nav-arrow"></span>
+            <ul class="dropdown-menu">
+              <li><a id="sign-out" href="" (click)="logout()">Log Out</a></li>
+            </ul>
+          </li>
+          <li *ngIf="!isAuthenticated">
+            <a id="login-menu" href="" (click)="login()">Log In</a>
+          </li>
+        </ul>
+      </div><!--/.nav-collapse -->
+    </div><!--/.container-->
+  </nav>
+</div>
+
+<div class="container">
+  <div class="page-header">
+    <div style="float:right;">
+      <a target="_blank" href="https://github.com/spring-projects/spring-authorization-server">
+        <img src="/assets/img/github.png" alt="github logo">
+      </a>
+    </div>
+    <h1>Angular OIDC <small>with Spring Authorization Server</small></h1>
+  </div>
+  <router-outlet></router-outlet>
+</div>
+<br />
+
+<!-- Footer -->
+<div id="footer">
+  <footer>
+    <div class="container hidden-print">
+      <div class="text-center">
+        <p class="muted credit">Visit the <a href="https://spring.io/projects/spring-security" target="_blank">Spring Security</a> site for more <a href="https://github.com/spring-projects/spring-security-samples" target="_blank">samples</a>.</p>
+      </div>
+    </div>
+  </footer>
+</div>

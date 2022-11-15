@@ -1,0 +1,20 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h3 class="panel-title">Authorize the client using <span style="font-family: monospace;">grant_type</span>:</h3>
+    </div>
+    <ul class="list-group">
+        <li class="list-group-item">
+            <a [routerLink]="['/authorize']"><span style="font-size: medium;">Authorization Code</span>&nbsp;&nbsp;<small class="text-muted">(Login to Spring Authorization Server using: user/password)</small></a>
+        </li>
+    </ul>
+    <div class="panel-footer">
+        <h4>Messages:</h4>
+        <table class="table table-condensed">
+                <tbody>
+                    <tr class="row" *ngFor="let message of messages">
+                        <td>{{message}}</td>
+                    </tr>
+                </tbody>
+        </table>
+    </div>
+</div>
