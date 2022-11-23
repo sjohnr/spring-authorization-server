@@ -1,0 +1,88 @@
+@import url("https://getbootstrap.com/docs/4.0/examples/signin/signin.css");
+
+/* SpringOne styles */
+
+@font-face {
+    font-family: 'Metropolis';
+    font-weight: normal;
+    font-style: normal;
+    src: url(https://d1ophd2rlqbanb.cloudfront.net/fonts/WOFF/Metropolis-Regular.woff) format("woff"), url(https://d1ophd2rlqbanb.cloudfront.net/fonts/Truetype/Metropolis-Regular.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: 'Metropolis';
+    font-weight: 500;
+    font-style: normal;
+    src: url(https://d1ophd2rlqbanb.cloudfront.net/fonts/WOFF/Metropolis-SemiBold.woff) format("woff"), url(https://d1ophd2rlqbanb.cloudfront.net/fonts/Truetype/Metropolis-SemiBold.ttf) format("truetype");
+}
+
+@font-face {
+    font-family: 'Metropolis';
+    font-weight: bold;
+    font-style: normal;
+    src: url(https://d1ophd2rlqbanb.cloudfront.net/fonts/WOFF/Metropolis-Bold.woff) format("woff"), url(https://d1ophd2rlqbanb.cloudfront.net/fonts/Truetype/Metropolis-Bold.ttf) format("truetype");
+}
+
+html {
+    font-family: Metropolis, Helvetica, Arial, sans-serif;
+}
+
+body {
+    font-family: Metropolis, Helvetica, Arial, sans-serif;
+    /*background: #eee url(../img/vmware-logo.svg) no-repeat left 100px bottom 100px;*/
+    /*color: #fff;*/
+    min-height: 100vh;
+    padding: 40px 0;
+}
+
+.btn {
+    /*background-color: #80EB6E;*/
+    /*color: #000;*/
+    border: none;
+    border-radius: 0;
+    font-size: 1em;
+    line-height: 2.5em;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+}
+
+.btn:hover {
+    background-color: #000;
+    color: #fff;
+}
+
+.btn:focus {
+    /*border: 1px dotted #80EB6E;*/
+    /*background-color: inherit;*/
+}
+
+.form-signin .form-control, .form-signin .form-control::placeholder {
+    background-color: transparent;
+    border: solid #000;
+    border-width: 0 0 2px 0;
+    border-radius: 0;
+    color: #000;
+}
+
+.container {
+    /*background: url(../img/springone.svg) no-repeat top left;*/
+    background-size: 450px;
+    padding-top: 250px;
+}
+
+.form-signin {
+    max-width: 500px;
+}
+
+.form-signin h2.form-signin-heading {
+    font-size: 4em;
+    margin: 3vh 0;
+}
+
+h3 {
+    font-size: 3em;
+}
+
+.text-primary {
+    /*color: #80EB6E !important;*/
+}

@@ -34,7 +34,7 @@ public class SecurityConfig {
 
 	@Bean
 	WebSecurityCustomizer webSecurityCustomizer() {
-		return (web) -> web.ignoring().requestMatchers("/webjars/**");
+		return (web) -> web.ignoring().requestMatchers("/webjars/**", "/assets/**");
 	}
 
 	// @formatter:off
@@ -45,7 +45,7 @@ public class SecurityConfig {
 				authorize.anyRequest().authenticated()
 			)
 			.oauth2Login(oauth2Login ->
-				oauth2Login.loginPage("/oauth2/authorization/messaging-client-oidc"))
+				oauth2Login.loginPage("/oauth2/authorization/test-client-oidc"))
 			.oauth2Client(withDefaults());
 		return http.build();
 	}
