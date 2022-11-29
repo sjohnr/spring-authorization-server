@@ -4,7 +4,6 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.interfaces.RSAPrivateKey;
 import java.security.interfaces.RSAPublicKey;
-import java.time.Duration;
 import java.util.UUID;
 
 import com.nimbusds.jose.jwk.JWKSet;
@@ -33,7 +32,6 @@ import org.springframework.security.oauth2.server.authorization.config.annotatio
 import org.springframework.security.oauth2.server.authorization.config.annotation.web.configurers.OAuth2AuthorizationServerConfigurer;
 import org.springframework.security.oauth2.server.authorization.settings.AuthorizationServerSettings;
 import org.springframework.security.oauth2.server.authorization.settings.ClientSettings;
-import org.springframework.security.oauth2.server.authorization.settings.TokenSettings;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
@@ -103,11 +101,6 @@ public class SecurityConfig {
 				.scope("message.read")
 				.scope("message.write")
 				.clientSettings(ClientSettings.builder().requireAuthorizationConsent(true).build())
-				.tokenSettings(TokenSettings.builder()
-					.accessTokenTimeToLive(Duration.ofSeconds(60))
-					.refreshTokenTimeToLive(Duration.ofDays(365))
-					.build()
-				)
 				.build();
 
 		return new InMemoryRegisteredClientRepository(registeredClient);
