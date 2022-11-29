@@ -20,10 +20,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
-import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
-import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestCustomizers;
-import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
 import org.springframework.security.web.SecurityFilterChain;
 
 import static org.springframework.security.config.Customizer.withDefaults;
@@ -43,37 +39,15 @@ public class SecurityConfig {
 
 	// @formatter:off
 	@Bean
-	SecurityFilterChain securityFilterChain(HttpSecurity http,
-			ClientRegistrationRepository clientRegistrationRepository) throws Exception {
+	SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 		http
 			.authorizeHttpRequests(authorize ->
 				authorize.anyRequest().authenticated()
 			)
 			.oauth2Login(oauth2Login ->
-				oauth2Login.loginPage("/oauth2/authorization/messaging-client-oidc")
-					.authorizationEndpoint(authorization ->
-						authorization.authorizationRequestResolver(
-							authorizationRequestResolver(clientRegistrationRepository))))
-			.oauth2Client(oauth2Client ->
-				oauth2Client
-					.authorizationCodeGrant(authorizationCode ->
-						authorizationCode.authorizationRequestResolver(
-							authorizationRequestResolver(clientRegistrationRepository))));
+				oauth2Login.loginPage("/oauth2/authorization/messaging-client-oidc"))
+			.oauth2Client(withDefaults());
 		return http.build();
-	}
-	// @formatter:on
-
-	// @formatter:off
-	private OAuth2AuthorizationRequestResolver authorizationRequestResolver(
-			ClientRegistrationRepository clientRegistrationRepository) {
-
-		DefaultOAuth2AuthorizationRequestResolver authorizationRequestResolver =
-			new DefaultOAuth2AuthorizationRequestResolver(
-				clientRegistrationRepository, "/oauth2/authorization");
-		authorizationRequestResolver.setAuthorizationRequestCustomizer(
-			OAuth2AuthorizationRequestCustomizers.withPkce());
-
-		return authorizationRequestResolver;
 	}
 	// @formatter:on
 
