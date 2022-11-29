@@ -13,7 +13,5 @@ spring:
   security:
     oauth2:
       resourceserver:
-        opaquetoken:
-          introspection-uri: http://localhost:9000/oauth2/introspect
-          client-id: messaging-client
-          client-secret: secret
+        jwt:
+          issuer-uri: http://localhost:9000

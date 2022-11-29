@@ -38,7 +38,7 @@ public class ResourceServerConfig {
 					.requestMatchers("/messages/**").hasAuthority("SCOPE_message.read")
 					.and()
 			.oauth2ResourceServer()
-				.opaqueToken();
+				.jwt();
 		return http.build();
 	}
 	// @formatter:on
