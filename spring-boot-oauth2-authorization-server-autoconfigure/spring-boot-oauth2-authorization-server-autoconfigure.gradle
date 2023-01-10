@@ -1,0 +1,32 @@
+plugins {
+	id "io.spring.convention.spring-module"
+}
+
+group = "org.springframework.security.experimental"
+description = "Spring Boot AutoConfigure for Spring Authorization Server"
+
+configurations {
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
+}
+
+dependencies {
+	management platform(project(":spring-authorization-server-dependencies"))
+	management platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
+	annotationProcessor platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
+
+	api "org.springframework.boot:spring-boot-autoconfigure"
+	optional project(":spring-security-oauth2-authorization-server")
+	annotationProcessor "org.springframework.boot:spring-boot-configuration-processor"
+	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	testImplementation "org.springframework.security:spring-security-test"
+	testImplementation "org.springframework:spring-web"
+	testImplementation "jakarta.servlet:jakarta.servlet-api"
+	testImplementation "org.springframework:spring-webmvc"
+	testImplementation "org.assertj:assertj-core"
+}
+
+tasks.named("test") {
+	useJUnitPlatform()
+}

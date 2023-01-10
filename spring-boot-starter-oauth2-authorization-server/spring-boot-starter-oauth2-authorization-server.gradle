@@ -1,0 +1,15 @@
+plugins {
+	id "io.spring.convention.spring-module"
+}
+
+group = "org.springframework.security.experimental"
+description = "Starter for using Spring Authorization Server features"
+
+dependencies {
+	management platform(project(":spring-authorization-server-dependencies"))
+	management platform("org.springframework.boot:spring-boot-dependencies:$springBootVersion")
+
+	api "org.springframework.boot:spring-boot-starter"
+	api project(":spring-boot-oauth2-authorization-server-autoconfigure")
+	api project(":spring-security-oauth2-authorization-server")
+}
