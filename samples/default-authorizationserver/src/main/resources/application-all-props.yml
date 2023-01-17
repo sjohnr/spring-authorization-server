@@ -1,0 +1,66 @@
+server:
+  port: 9000
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: INFO
+    org.springframework.security: INFO
+    org.springframework.security.oauth2: INFO
+#    org.springframework.boot.autoconfigure: DEBUG
+
+spring:
+  security:
+    oauth2:
+      authorizationserver:
+        settings:
+          issuer: https://provider.com
+          authorization-endpoint: /oauth2/authorize
+          token-endpoint: /oauth2/token
+          jwk-set-endpoint: /oauth2/jwks
+          token-revocation-endpoint: /oauth2/revoke
+          token-introspection-endpoint: /oauth2/introspect
+          oidc-client-registration-endpoint: /connect/register
+          oidc-user-info-endpoint: /userinfo
+          additional-settings:
+            custom-setting-1: value1
+            custom-setting-2: value2
+        client-registration:
+          messaging-client:
+            client-id: messaging-client
+            client-id-issued-at:
+            client-secret: "{noop}secret"
+            client-secret-expires-at:
+            client-name: Messaging Client
+            client-authentication-methods:
+              - client_secret_basic
+            authorization-grant-types:
+              - authorization_code
+              - refresh_token
+              - client_credentials
+            redirect-uris:
+              - http://127.0.0.1:8080/login/oauth2/code/messaging-client-oidc
+              - http://127.0.0.1:8080/authorized
+            scopes:
+              - openid
+              - profile
+              - message.read
+              - message.write
+            client-settings:
+              require-proof-key: true
+              require-authorization-consent: true
+              jwk-set-url: http://127.0.0.1:8080/jwks
+              token-endpoint-authentication-signing-algorithm: RS256
+              additional-settings:
+                custom-setting-1: value1
+                custom-setting-2: value2
+            token-settings:
+              authorization-code-time-to-live: 5m
+              access-token-time-to-live: 5m
+              access-token-format: self-contained
+              reuse-refresh-tokens: true
+              refresh-token-time-to-live: 60m
+              id-token-signature-algorithm: RS256
+              additional-settings:
+                custom-setting-1: value1
+                custom-setting-2: value2
