@@ -84,6 +84,7 @@ public class SecurityConfiguration {
                     .antMatchers("/security-question").hasAuthority("SECURITY_QUESTION_REQUIRED")
                     .anyRequest().hasRole("USER")
             )
+			.requestCache(cache -> cache.disable())
             .formLogin((formLogin) ->
                 formLogin
                     .loginPage("/login")
