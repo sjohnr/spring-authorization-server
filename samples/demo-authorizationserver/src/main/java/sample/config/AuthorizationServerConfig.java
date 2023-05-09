@@ -22,9 +22,8 @@ import com.nimbusds.jose.jwk.RSAKey;
 import com.nimbusds.jose.jwk.source.JWKSource;
 import com.nimbusds.jose.proc.SecurityContext;
 import sample.authentication.DeviceClientAuthenticationProvider;
-import sample.jose.Jwks;
-import sample.federation.FederatedIdentityConfigurer;
 import sample.federation.FederatedIdentityIdTokenCustomizer;
+import sample.jose.Jwks;
 import sample.web.authentication.DeviceClientAuthenticationConverter;
 
 import org.springframework.context.annotation.Bean;
@@ -55,7 +54,8 @@ import org.springframework.security.oauth2.server.authorization.settings.ClientS
 import org.springframework.security.oauth2.server.authorization.token.JwtEncodingContext;
 import org.springframework.security.oauth2.server.authorization.token.OAuth2TokenCustomizer;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+
+import static sample.federation.FederatedIdentityAuthenticationEntryPoint.loginPage;
 
 /**
  * @author Joe Grandja
@@ -117,13 +117,11 @@ public class AuthorizationServerConfig {
 
 		// @formatter:off
 		http
-			.exceptionHandling(exceptions ->
-				exceptions.authenticationEntryPoint(new LoginUrlAuthenticationEntryPoint("/login"))
-			)
 			.oauth2ResourceServer(oauth2ResourceServer ->
 				oauth2ResourceServer.jwt(Customizer.withDefaults()))
-			.apply(new FederatedIdentityConfigurer());
+			.apply(loginPage("/login"));
 		// @formatter:on
+
 		return http.build();
 	}
 

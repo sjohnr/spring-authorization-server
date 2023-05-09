@@ -21,15 +21,22 @@ import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 
+import org.springframework.context.ApplicationContext;
+import org.springframework.http.MediaType;
 import org.springframework.http.server.ServletServerHttpRequest;
+import org.springframework.security.config.annotation.SecurityConfigurer;
+import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestRedirectFilter;
 import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.DefaultRedirectStrategy;
+import org.springframework.security.web.DefaultSecurityFilterChain;
 import org.springframework.security.web.RedirectStrategy;
 import org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint;
+import org.springframework.security.web.util.matcher.MediaTypeRequestMatcher;
 import org.springframework.web.util.UriComponentsBuilder;
 
 /**
@@ -77,6 +84,48 @@ public final class FederatedIdentityAuthenticationEntryPoint implements Authenti
 
 	public void setAuthorizationRequestUri(String authorizationRequestUri) {
 		this.authorizationRequestUri = authorizationRequestUri;
+	}
+
+	/**
+	 * Create a configurer for setting up the {@link FederatedIdentityAuthenticationEntryPoint} to redirect to the
+	 * login page.
+	 * <p>
+	 * Use this configurer with the {@code authorizationServerSecurityFilterChain(http)}.
+	 *
+	 * @param loginPageUrl The URL of the login page, defaults to {@code "/login"}
+	 */
+	public static SecurityConfigurer<DefaultSecurityFilterChain, HttpSecurity> loginPage(String loginPageUrl) {
+		return new DefaultEntryPointConfigurer(loginPageUrl);
+	}
+
+	/**
+	 * A configurer for setting up the {@link FederatedIdentityAuthenticationEntryPoint} to redirect to the login page.
+	 */
+	private static final class DefaultEntryPointConfigurer extends AbstractHttpConfigurer<DefaultEntryPointConfigurer, HttpSecurity> {
+
+		private final String loginPageUrl;
+
+		private DefaultEntryPointConfigurer(String loginPageUrl) {
+			this.loginPageUrl = loginPageUrl;
+		}
+
+		@Override
+		public void init(HttpSecurity http) throws Exception {
+			ApplicationContext applicationContext = http.getSharedObject(ApplicationContext.class);
+
+			ClientRegistrationRepository clientRegistrationRepository =
+					applicationContext.getBean(ClientRegistrationRepository.class);
+
+			// @formatter:off
+			http
+				.exceptionHandling(exceptionHandling ->
+					exceptionHandling.defaultAuthenticationEntryPointFor(
+						new FederatedIdentityAuthenticationEntryPoint(this.loginPageUrl, clientRegistrationRepository),
+						new MediaTypeRequestMatcher(MediaType.TEXT_HTML)
+					)
+				);
+			// @formatter:on
+		}
 	}
 
 }
