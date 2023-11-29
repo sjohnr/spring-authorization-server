@@ -10,7 +10,7 @@ on:
 
 jobs:
   build:
-    name: Build
+#    name: Build
     uses: spring-io/spring-security-release-tools/.github/workflows/build.yml@v1
     strategy:
       matrix:
@@ -22,7 +22,7 @@ jobs:
       distribution: temurin
     secrets: inherit
   test:
-    name: Test Against Snapshots
+#    name: Test Against Snapshots
     uses: spring-io/spring-security-release-tools/.github/workflows/test.yml@v1
     with:
       test-args: --refresh-dependencies --stacktrace -PforceMavenRepositories=snapshot -PspringFrameworkVersion=6.0.+ -PspringSecurityVersion=6.1.+
@@ -35,14 +35,14 @@ jobs:
       should-deploy-artifacts: ${{ needs.build.outputs.should-deploy-artifacts }}
     secrets: inherit
   deploy-docs:
-    name: Deploy Docs
+#    name: Deploy Docs
     needs: [build, test]
     uses: spring-io/spring-security-release-tools/.github/workflows/deploy-docs.yml@v1
     with:
       should-deploy-docs: ${{ needs.build.outputs.should-deploy-artifacts }}
     secrets: inherit
   perform-release:
-    name: Perform Release
+#    name: Perform Release
     needs: [deploy-artifacts, deploy-docs]
     uses: spring-io/spring-security-release-tools/.github/workflows/perform-release.yml@v1
     with:
